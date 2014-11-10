@@ -44,7 +44,7 @@ allS = [t for t in train]
 train.close()
 prevMistakes = sys.maxint
 
-for x in range(10):
+for x in range(5):
 #while True
 	# pick random order for sentences
 	shuffle(allS) 
