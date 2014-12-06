@@ -4,6 +4,7 @@ import sys
 import itertools
 from random import shuffle
 import json
+import matplotlib.pyplot as plt
 
 alpha = 0.5
 
@@ -12,6 +13,8 @@ category = "atheistchristian"
 labels = [0,1]
 
 SV = SupportVector()
+
+error_rate = []
 
 
 def ymax(features):
@@ -43,7 +46,7 @@ train = open("../20N/"+category+".train")
 allS = [t for t in train]
 train.close()
 
-for x in range(10):
+for x in range(3):
 #while True
 	# pick random order for sentences
 	shuffle(allS) 
@@ -55,6 +58,8 @@ for x in range(10):
 		yActual = key[sent[0]]
 
 		yArg = ymax(data)
+
+		#SV.iterate_alphas()
 
 		if yArg != yActual:
 			SV.add_FVs(FeatureVector(data, yActual), FeatureVector(data, yArg), alpha)
@@ -74,7 +79,10 @@ for x in range(10):
 			if not (y == yArg):
 				mistakes += 1
 			total+=1
-		print mistakes, total
+		#print mistakes, total
+		error_rate +=[mistakes]
+		print i
+		i+=1
 
 
 # look at test set
@@ -95,3 +103,6 @@ for sent in test:
 	total+=1
 print "results from training set"
 print mistakes, total
+
+plt.plot(range(len(error_rate)), error_rate)
+plt.show()
