@@ -10,6 +10,7 @@ class FeatureVector:
 
 	def __init__(self, features, label):
 		self.features = features
+		self.features["BIAS"] = 1
 		self.label = label
 
 	def dot_prod(self, fv2):
@@ -51,10 +52,10 @@ class SupportVector:
 		# stats.rv_discrete(values=(range(len(self.Alphas),[abs(x) for x in self.Alphas])))
 
 
-		if (len(self.FVs) > self.N):
-			subset = sample(xrange(len(self.FVs)), self.N)
-		else:
-			subset = range(len(self.FVs))
+		#if (len(self.FVs) > self.N):
+		#	subset = sample(xrange(len(self.FVs)), self.N)
+		#else:
+		subset = range(len(self.FVs))
 
 		for x in subset:
 			total+= self.Alphas[x]*(self.FVs[x].dot_prod(fv2))

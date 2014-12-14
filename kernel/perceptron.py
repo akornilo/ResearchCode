@@ -15,11 +15,12 @@ labels = [0,1]
 SV = SupportVector()
 
 error_rate = []
+error_rate2 = []
 
 
 def ymax(features):
 	global labels, SV
-	maxV = -sys.maxint - 1
+	maxV = float(-sys.maxint - 1)
 	maxLabel = -1
 
 	for l in labels:
@@ -27,7 +28,7 @@ def ymax(features):
 		if maxV < total:
 			maxV = total
 			maxLabel = l
-
+	#print "ymax output:",features, maxLabel, maxV
 	return maxLabel
 
 
@@ -46,12 +47,16 @@ train = open("../20N/"+category+".train")
 allS = [t for t in train]
 train.close()
 
+shuffle(allS)
+mySet = allS[:100]
+
 for x in range(3):
 #while True
 	# pick random order for sentences
-	shuffle(allS) 
+	shuffle(mySet) 
 	i = 0
-	for sent in allS:
+
+	for sent in mySet:
 		sent = sent.rstrip().split("\t")
 		data = json.loads(sent[1])
 
@@ -64,7 +69,7 @@ for x in range(3):
 		if yArg != yActual:
 			SV.add_FVs(FeatureVector(data, yActual), FeatureVector(data, yArg), alpha)
 
-		# look at dev set
+		# # look at dev set
 		dev = open("../20N/"+category+".dev")
 
 		mistakes = 0
@@ -81,28 +86,47 @@ for x in range(3):
 			total+=1
 		#print mistakes, total
 		error_rate +=[mistakes]
-		print i
+		print "dev",i, mistakes/(total*1.0)
+
+
+		total = 0
+		mistakes=0
+		for sent in mySet:
+			sent = sent.rstrip().split("\t")
+			data = json.loads(sent[1])
+			y = key[sent[0]]
+			yArg = ymax(data)
+
+			#print "correct label",y,"predict", yArg
+			if not (y == yArg):
+				mistakes += 1
+			total+=1
+		print "train", i, mistakes/(total*1.0)
+		error_rate2+=[mistakes]
+
 		i+=1
 
 
 # look at test set
 
-test = open("../20N/"+category+"test.json")
+# test = open("../20N/"+category+"test.json")
 
-mistakes = 0
-total = 0
-for sent in test:
-	sent = sent.rstrip().split("\t")
-	data = json.loads(sent[1])
+# mistakes = 0
+# total = 0
+# for sent in test:
+# 	sent = sent.rstrip().split("\t")
+# 	data = json.loads(sent[1])
 
-	y = key[sent[0]]
-	yArg = ymax(data)
+# 	y = key[sent[0]]
+# 	yArg = ymax(data)
 
-	if not (y == yArg):
-		mistakes += 1
-	total+=1
-print "results from training set"
-print mistakes, total
+# 	if not (y == yArg):
+# 		mistakes += 1
+# 	total+=1
+# print "results from training set"
+# print mistakes, total
 
 plt.plot(range(len(error_rate)), error_rate)
+plt.plot(range(len(error_rate2)), error_rate2)
+
 plt.show()
