@@ -73,11 +73,15 @@ for x in range(3):
 
 		yArg = ymaxCA(sent[1], yActual)
 
+		#update scale factor to t+1
+		SV.update_scalefactor()
+
 		# if we guessed wrong, add vectors
 		if yArg != yActual:
-			SV.add_FVs(FeatureVector(sent[1], yActual), FeatureVector(sent[1], yArg))
+			SV.add_SVs(FeatureVector(sent[1], yActual), FeatureVector(sent[1], yArg))
 
-		#SV.iterate_alphas()
+	
+		print "total support vectors", len(SupportVector.Alphas)
 
 		(mistakes, total) = test_sent(train, keys)
 		error_rate +=[mistakes/(total*1.0)]
